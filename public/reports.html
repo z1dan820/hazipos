@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - HaziPos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-950 text-white p-6" x-data="reportApp()" x-init="init()">
+    
+    <div class="flex items-center gap-4 mb-8">
+        <a href="/dashboard.html" class="text-gray-400">⬅</a>
+        <h1 class="text-2xl font-bold">Laporan <span class="text-purple-500">Hari Ini</span></h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+            <p class="text-gray-500 text-xs uppercase font-bold">Total Transaksi</p>
+            <h2 class="text-3xl font-bold" x-text="summary.total_transaksi || 0"></h2>
+        </div>
+        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+            <p class="text-blue-500 text-xs uppercase font-bold">Total Omzet (Penjualan)</p>
+            <h2 class="text-3xl font-bold text-blue-400" x-text="formatRupiah(summary.total_omzet)"></h2>
+        </div>
+        <div class="bg-gray-900 p-6 rounded-2xl border border-purple-900/50 shadow-lg shadow-purple-900/10">
+            <p class="text-green-500 text-xs uppercase font-bold">Laba Bersih (Untung)</p>
+            <h2 class="text-3xl font-bold text-green-400" x-text="formatRupiah(summary.total_laba)"></h2>
+        </div>
+    </div>
+
+    <h3 class="font-bold mb-4 text-gray-400">10 Transaksi Terakhir</h3>
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800 text-gray-400 uppercase text-[10px]">
+                <tr>
+                    <th class="p-4">Invoice</th>
+                    <th class="p-4">Kasir</th>
+                    <th class="p-4 text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="s in sales" :key="s.id">
+                    <tr class="border-t border-gray-800">
+                        <td class="p-4 font-mono text-blue-400" x-text="s.invoice_no"></td>
+                        <td class="p-4" x-text="s.cashier_name"></td>
+                        <td class="p-4 text-right font-bold" x-text="formatRupiah(s.total_amount)"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function reportApp() {
+            return {
+                summary: {}, sales: [],
+                async init() {
+                    const resSum = await fetch('/api/reports/summary');
+                    this.summary = await resSum.json();
+                    const resSales = await fetch('/api/reports/recent');
+                    this.sales = await resSales.json();
+                },
+                formatRupiah(num) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num || 0); }
+            }
+        }
+    </script>
+</body>
+</html>

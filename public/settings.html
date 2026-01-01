@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - HaziPos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-950 text-white p-6 font-sans" x-data="settingsApp()" x-init="init()">
+
+    <div class="flex items-center gap-4 mb-8">
+        <a href="/dashboard.html" class="text-gray-400 text-xl">⬅</a>
+        <h1 class="text-2xl font-bold">Pengaturan Toko</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h2 class="text-xl font-bold mb-4 text-blue-400">Manajemen User</h2>
+            
+            <div class="bg-gray-800/50 p-4 rounded-xl mb-4 space-y-3">
+                <input x-model="newUser.username" type="text" placeholder="Username Baru" class="w-full bg-gray-900 border border-gray-700 px-3 py-2 rounded text-sm">
+                <div class="flex gap-2">
+                    <input x-model="newUser.password" type="text" placeholder="Password" class="flex-1 bg-gray-900 border border-gray-700 px-3 py-2 rounded text-sm">
+                    <select x-model="newUser.role" class="bg-gray-900 border border-gray-700 px-3 py-2 rounded text-sm">
+                        <option value="cashier">Kasir</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button @click="addUser()" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded text-sm font-bold">Tambah User</button>
+            </div>
+
+            <div class="space-y-2">
+                <template x-for="u in users" :key="u.id">
+                    <div class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border border-gray-700">
+                        <div>
+                            <div class="font-bold text-sm" x-text="u.username"></div>
+                            <div class="text-[10px] text-gray-400 uppercase" x-text="u.role"></div>
+                        </div>
+                        <button x-show="u.username !== 'admin'" @click="deleteUser(u.id)" class="text-red-500 hover:text-red-400 text-xs">Hapus</button>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h2 class="text-xl font-bold mb-4 text-purple-400">Kategori Produk</h2>
+            
+            <div class="flex gap-2 mb-4">
+                <input x-model="newCat" @keydown.enter="addCategory()" type="text" placeholder="Nama Kategori..." class="flex-1 bg-gray-800 border border-gray-700 px-3 py-2 rounded text-sm outline-none">
+                <button @click="addCategory()" class="bg-purple-600 px-4 rounded text-sm font-bold">+</button>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <template x-for="c in categories" :key="c.id">
+                    <div class="bg-gray-800 px-3 py-1 rounded-full text-xs flex items-center gap-2 border border-gray-700">
+                        <span x-text="c.name"></span>
+                        <button @click="deleteCategory(c.id)" class="text-red-400 hover:text-white">×</button>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function settingsApp() {
+            return {
+                users: [], categories: [],
+                newUser: { username: '', password: '', role: 'cashier' },
+                newCat: '',
+
+                async init() {
+                    this.fetchUsers();
+                    this.fetchCats();
+                },
+                async fetchUsers() {
+                    const res = await fetch('/api/settings/users');
+                    this.users = await res.json();
+                },
+                async addUser() {
+                    if(!this.newUser.username || !this.newUser.password) return alert("Lengkapi data!");
+                    await fetch('/api/settings/users', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(this.newUser)
+                    });
+                    this.newUser.username = ''; this.newUser.password = '';
+                    this.fetchUsers();
+                },
+                async deleteUser(id) {
+                    if(!confirm("Hapus user ini?")) return;
+                    await fetch(`/api/settings/users/${id}`, { method: 'DELETE' });
+                    this.fetchUsers();
+                },
+                async fetchCats() {
+                    const res = await fetch('/api/settings/categories');
+                    this.categories = await res.json();
+                },
+                async addCategory() {
+                    if(!this.newCat) return;
+                    await fetch('/api/settings/categories', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ name: this.newCat })
+                    });
+                    this.newCat = '';
+                    this.fetchCats();
+                },
+                async deleteCategory(id) {
+                    if(!confirm("Hapus kategori?")) return;
+                    await fetch(`/api/settings/categories/${id}`, { method: 'DELETE' });
+                    this.fetchCats();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
