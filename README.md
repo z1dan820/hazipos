@@ -8,7 +8,7 @@ HaziPos dirancang untuk berjalan di berbagai perangkat, mulai dari PC High-end h
 ## 📥 Cara Instalasi (Satu Baris Perintah)
 Buka terminal di perangkat Anda (PC Linux atau STB Armbian) dan jalankan:
 ```bash
-curl -sSL [https://raw.githubusercontent.com/fhamzidan/hazipos/main/install.sh](https://raw.githubusercontent.com/z1dan820/hazipos/main/install.sh) | bash
+curl -sSL [https://raw.githubusercontent.com/z1dan820/hazipos/main/install.sh](https://raw.githubusercontent.com/z1dan820/hazipos/main/install.sh) | bash
 
 ```
 ***🐳 Menggunakan Docker
