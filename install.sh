@@ -49,7 +49,7 @@ npm install --production
 echo -e "${BLUE}[5/5] Konfigurasi izin folder & PM2...${NC}"
 chmod -R 777 $INSTALL_DIR # Pastikan aplikasi bisa menulis database/log
 pm2 delete hazipos >/dev/null 2>&1 || true
-pm2 start index.js --name "hazipos"
+pm2 start server.js --name "hazipos"
 
 # Auto-start saat reboot
 pm2 save
