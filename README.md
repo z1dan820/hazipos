@@ -15,12 +15,12 @@ curl -sSL [https://raw.githubusercontent.com/z1dan820/hazipos/main/install.sh](h
 Jika perangkat Anda sudah terinstall Docker:**
 ```bash
 docker build -t hazipos .
-docker run -d -p 3000:3000 --name hazipos-app --restart always hazipos
+docker run -d -p 3010:3010 --name hazipos-app --restart always hazipos
 ```
 **🖥️ Akses Aplikasi**
 
 Setelah instalasi selesai, buka browser dan akses:
 
-Lokal: http://localhost:3000
+Lokal: http://localhost:3010
 
-Jaringan (STB): http://[IP-ALAT-ANDA]:3000
+Jaringan (STB): http://[IP-ALAT-ANDA]:3010
