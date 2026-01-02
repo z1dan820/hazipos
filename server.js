@@ -12,7 +12,7 @@ const reportRoutes = require('./src/routes/reports');
 const settingsRoutes = require('./src/routes/settings');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3010;
 
 // Middleware
 app.use(cors());
